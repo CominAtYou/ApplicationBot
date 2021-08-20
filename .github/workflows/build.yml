@@ -1,0 +1,54 @@
+name: build
+
+on: [push]
+
+jobs:
+  build:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+    - name: Compile TypeScript
+      run: npm i && tsc
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.0.1"
+    - name: Post Result
+      if: always()
+      env:
+        JOB_STATUS: ${{ job.status }}
+        WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        HOOK_OS_NAME: ${{ runner.os }}
+        WORKFLOW_NAME: ${{ github.workflow }}
+      run: |
+        git clone https://github.com/CominAtYou/github-actions-discord-webhook webhook
+        bash webhook/send.sh $JOB_STATUS $WEBHOOK_URL
+      shell: bash
+  eslint:
+    needs: build
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+    - name: Lint
+      run: npm i && npm run lint
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.0.1"
+    - name: Post Result
+      if: failure()
+      env:
+        JOB_STATUS: ${{ job.status }}
+        WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        HOOK_OS_NAME: ${{ runner.os }}
+        WORKFLOW_NAME: ${{ github.workflow }}
+      run: |
+        git clone https://github.com/CominAtYou/github-actions-discord-webhook webhook
+        bash webhook/send-eslint.sh $JOB_STATUS $WEBHOOK_URL
+      shell: bash

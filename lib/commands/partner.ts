@@ -1,7 +1,7 @@
 import Discord = require('discord.js');
 import { sendInteractionTimeoutError, sendTimeoutError } from '../timeoutError';
 import { sleep } from '../util';
-import { yesNoActionRow } from '../YesNoActionRow';
+import { yesNoActionRow } from '../yesNoActionRow';
 
 const codeBlue = 0x24ACF2;
 const errorRed = 0xD72D42;
@@ -27,7 +27,7 @@ export async function partner(message: Discord.Message, client: Discord.Client) 
         .setColor(codeBlue);
     message.channel.send({ embeds: [isAuthorizedEmbed], components: yesNoActionRow("PRIMARY", "SECONDARY") });
     try {
-        var collectedInteraction = await message.channel.awaitMessageComponent({ filter, time: 60000 });
+        var collectedInteraction = await message.channel.awaitMessageComponent({ filter, time: 60000 }); // eslint-disable-line no-var
     }
     catch {
         sendTimeoutError(1, message);
@@ -79,7 +79,7 @@ export async function partner(message: Discord.Message, client: Discord.Client) 
     await message.channel.send({ embeds: [serverNameEmbed] });
     try {
         const filter = () => true;
-        var collectedMessage = await message.channel.awaitMessages({ filter, max: 1, time: 300000 });
+        var collectedMessage = await message.channel.awaitMessages({ filter, max: 1, time: 300000 }); // eslint-disable-line no-var
     }
     catch {
         sendTimeoutError(5, message);
