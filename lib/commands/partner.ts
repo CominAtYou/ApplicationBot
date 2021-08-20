@@ -15,7 +15,7 @@ export async function partner(message: Discord.Message, client: Discord.Client) 
         .setDescription("So, you wanna partner with us? That's great! Just tell us a bit about yourself, and we'll have you up and going in no time. This process should be very easy, we just need to know a few things about your server.")
         .setColor(codeBlue);
     const fakeActionRow = new Discord.MessageActionRow().addComponents(
-        new Discord.MessageButton().setLabel("Important Information").setStyle("LINK").setURL(actionRowLinks[Math.floor(Math.random() * (3 - 0 + 1) + 0)])
+        new Discord.MessageButton().setLabel("Important Information").setStyle("LINK").setURL(actionRowLinks[Math.floor(Math.random() * 4)]) // gets random int from 0-3
     );
     await message.channel.send({ embeds: [appIntroEmbed], components: [fakeActionRow] });
     await message.channel.sendTyping();
